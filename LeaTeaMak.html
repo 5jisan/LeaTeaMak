@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    
+    <title>리그오브레전드 내전</title>
+
+    <style>
+        body {
+            font-family: "Noto Sans KR", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 500;
+            font-style: normal;
+            text-align: center;
+            background-color: #f2f2f2;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #team1, #team2 {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* 플레이어 정보 입력 칸 스타일 추가 */
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input {
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        /* 플레이어 정보 입력 칸을 감싸는 div 스타일 추가 */
+        #inputContainer {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        #inputContainer div {
+            margin-right: 20px;
+        }
+    </style>
+</head>
+    <body>
+
+        <h1>리그오브레전드 내전</h1>
+
+        <div id="inputContainer">
+            <!-- 이름 및 실력 입력 칸 -->
+            <div>
+                <label for="playerInfo1">플레이어 정보를 입력하세요</label>
+                <input type="text" id="playerInfo1" placeholder="플레이어1:챌">
+                <br>
+                <input type="text" id="playerInfo2" placeholder="플레이어2:그">
+                <br>
+                <input type="text" id="playerInfo3" placeholder="플레이어3:마">
+                <br>
+                <input type="text" id="playerInfo4" placeholder="플레이어4:다">
+                <br>
+                <input type="text" id="playerInfo5" placeholder="플레이어5:에">
+                <br>
+                <input type="text" id="playerInfo6" placeholder="플레이어6:플">
+                <br>
+                <input type="text" id="playerInfo7" placeholder="플레이어7:골">
+                <br>
+                <input type="text" id="playerInfo8" placeholder="플레이어8:실">
+                <br>
+                <input type="text" id="playerInfo9" placeholder="플레이어9:브">
+                <br>
+                <input type="text" id="playerInfo10" placeholder="플레이어10:아">
+                <br>
+            </div>
+        </div>
+
+        <button onclick="createTeams()">팀 나누기</button>
+
+        <p id="team1"></p>
+        <p id="team2"></p>
+
+        <script>
+        function createTeams() {
+            // 플레이어 정보 입력값 가져오기
+            var playerInfo1 = document.getElementById('playerInfo1').value.trim();
+            var playerInfo2 = document.getElementById('playerInfo2').value.trim();
+            var playerInfo3 = document.getElementById('playerInfo3').value.trim();
+            var playerInfo4 = document.getElementById('playerInfo4').value.trim();
+            var playerInfo5 = document.getElementById('playerInfo5').value.trim();
+            var playerInfo6 = document.getElementById('playerInfo6').value.trim();
+            var playerInfo7 = document.getElementById('playerInfo7').value.trim();
+            var playerInfo8 = document.getElementById('playerInfo8').value.trim();
+            var playerInfo9 = document.getElementById('playerInfo9').value.trim();
+            var playerInfo10 = document.getElementById('playerInfo10').value.trim();
+
+            // 빈 값 체크
+            if (playerInfo1 === '' || playerInfo2 === '' || playerInfo3 === '' || playerInfo4 === '' /* ... */) {
+                alert('이름과 실력을 모두 입력하세요.');
+                return;
+            }
+
+            // 플레이어 정보를 객체로 변환
+            var players = [
+                parsePlayerInfo(playerInfo1),
+                parsePlayerInfo(playerInfo2),
+                parsePlayerInfo(playerInfo3),
+                parsePlayerInfo(playerInfo4),
+                parsePlayerInfo(playerInfo5),
+                parsePlayerInfo(playerInfo6),
+                parsePlayerInfo(playerInfo7),
+                parsePlayerInfo(playerInfo8),
+                parsePlayerInfo(playerInfo9),
+                parsePlayerInfo(playerInfo10)
+            ];
+
+            // 랜덤으로 섞기
+            players.sort(() => Math.random() - 0.5);
+
+            // 팀 나누기
+            var result = balanceTeams(players);
+
+            // 결과 출력
+            document.getElementById('team1').innerText = '1팀 : ' + result.team1.map(player => `${player.name}`).join(', ');
+            document.getElementById('team2').innerText = '2팀 : ' + result.team2.map(player => `${player.name}`).join(', ');
+        }
+
+        function parsePlayerInfo(info) {
+            var [name, skillKeyword] = info.split(':');
+            var skill = getSkillValue(skillKeyword.trim());
+            return { name: name.trim(), skill: skill };
+        }
+
+        function getSkillValue(skillKeyword) {
+            switch (skillKeyword) {
+                case '챌':
+                    return 50;
+                case '그':
+                    return 45;
+                case '마':
+                    return 40;
+                case '다':
+                    return 35;
+                case '에':
+                    return 30;
+                case '플':
+                    return 25;
+                case '골':
+                    return 20;
+                case '실':
+                case '브':
+                case '아':
+                    return 15;
+                default:
+                    return 0;
+            }
+        }
+
+        function balanceTeams(players) {
+            // 플레이어를 실력을 기준으로 내림차순 정렬
+            players.sort((a, b) => b.skill - a.skill);
+
+            // 각 팀의 실력 합 초기화
+            var team1Sum = 0;
+            var team2Sum = 0;
+
+            // 팀에 플레이어 할당
+            var team1 = [];
+            var team2 = [];
+
+            for (var i = 0; i < players.length; i++) {
+                if (team1Sum <= team2Sum) {
+                    team1.push(players[i]);
+                    team1Sum += players[i].skill;
+                } else {
+                    team2.push(players[i]);
+                    team2Sum += players[i].skill;
+                }
+            }
+
+            return { team1: team1, team2: team2 };
+        }
+        </script>
+
+    </body>
+</html>
